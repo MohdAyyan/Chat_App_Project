@@ -9,8 +9,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "echo \"Build complete\"",
-    "prepare": "npm install"
+    "build": "echo \"Build complete\""
   },
   "keywords": [],
   "author": "",
