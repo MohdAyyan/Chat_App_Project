@@ -6,20 +6,24 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/database");
 const User = require("./models/User");
 
-
 dotenv.config();
 
-
 connectDB();
+
+// CORS configuration
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:3000",
+  "https://chat-qvs6uz2rj-mohdayyan297-gmailcoms-projects.vercel.app",
+];
 
 const app = express();
 const server = http.createServer(app);
 
-
 const io = socketIo(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
-    methods: ["GET", "POST"],
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   },
 });
@@ -27,7 +31,18 @@ const io = socketIo(server, {
 // Middleware
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
     credentials: true,
   })
 );
@@ -82,13 +97,11 @@ io.on("connection", async (socket) => {
     lastSeen: new Date(),
   });
 
-
   onlineUsers.set(socket.userId, {
     username: socket.user.username,
     socketId: socket.id,
     joinedAt: new Date(),
   });
-
 
   io.emit("user-online", {
     userId: socket.userId,
@@ -104,12 +117,10 @@ io.on("connection", async (socket) => {
   }));
   socket.emit("online-users-list", onlineUsersList);
 
-  
   socket.on("join-channel", (channelId) => {
     socket.join(`channel:${channelId}`);
     console.log(`User ${socket.userId} joined channel ${channelId}`);
 
-    
     io.to(`channel:${channelId}`).emit("user-joined-channel", {
       userId: socket.userId,
       username: socket.user.username,

@@ -1,10 +1,32 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
+  // Environment variables should be loaded from .env.local, not here
+  // This ensures Vercel environment variables take precedence
+  env: {},
+  // Add CORS headers for API routes
+  async headers() {
+    return [
+      {
+        // Apply these headers to all routes
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "*",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST, PUT, DELETE, OPTIONS",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
+        ],
+      },
+    ];
   },
-}
+};
 
-module.exports = nextConfig
-
+module.exports = nextConfig;
