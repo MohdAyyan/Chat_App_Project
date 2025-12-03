@@ -32,6 +32,7 @@ interface Channel {
   _id: string;
   name: string;
   description?: string;
+  isPrivate?: boolean;
   createdBy: {
     _id: string;
     username: string;
@@ -507,7 +508,11 @@ export default function ChatInterface() {
                                   className="text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-3 py-1.5 rounded-lg transition-all duration-200 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-105 whitespace-nowrap flex items-center gap-1"
                                   title="Delete channel"
                                 >
-                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                  <svg
+                                    className="w-3 h-3"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
                                     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
                                   </svg>
                                   Delete
